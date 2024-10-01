@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статистика блогера</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script> <!-- Telegram Web App SDK -->
+</head>
+<body>
+    <div class="header">
+        <h1>Добро пожаловать, <span id="blogger-name"></span>!</h1>
+        <p>Это ваша статистика по дням</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-button" onclick="showTab('day1')">День 1</button>
+        <button class="tab-button" onclick="showTab('day2')">День 2</button>
+        <button class="tab-button" onclick="showTab('day3')">День 3</button>
+    </div>
+
+    <div class="tab-content" id="day1">
+        <canvas id="chartDay1"></canvas>
+    </div>
+    <div class="tab-content" id="day2" style="display:none;">
+        <canvas id="chartDay2"></canvas>
+    </div>
+    <div class="tab-content" id="day3" style="display:none;">
+        <canvas id="chartDay3"></canvas>
+    </div>
+
+    <script>
+        // Функция переключения вкладок
+        function showTab(day) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+            document.getElementById(day).style.display = 'block';
+        }
+
+        // Инициализация Chart.js
+        function renderChart(canvasId, data) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+                    datasets: [{
+                        label: 'Пользователи',
+                        data: data,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Пример данных
+        const day1Data = [100, 150, 200, 250, 300, 350, 400];
+        const day2Data = [90, 140, 190, 240, 290, 340, 390];
+        const day3Data = [80, 130, 180, 230, 280, 330, 380];
+
+        // Рендерим графики
+        renderChart('chartDay1', day1Data);
+        renderChart('chartDay2', day2Data);
+        renderChart('chartDay3', day3Data);
+
+        // Получаем информацию о пользователе из Telegram WebApp SDK
+        Telegram.WebApp.ready();
+        document.getElementById('blogger-name').textContent = Telegram.WebApp.initDataUnsafe.user.first_name;
+
+    </script>
+</body>
+</html>
